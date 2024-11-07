@@ -1,10 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
 
-const AddressForm = ({ onAddressAdded, onAddressChange }) => {
-  const [profile, setProfile] = useState({
-    firstName: '',
-    lastName: '',
+const ClinicForm = ({ onClinicAdded, onClinicChange }) => {
+  const [clinic, setClinic] = useState({
+    clinicName: '',
+    clinicId: '',
+    email: '',
     phone: '',
     address: '',
     unitNo: '',
@@ -36,35 +37,35 @@ const AddressForm = ({ onAddressAdded, onAddressChange }) => {
   const handleAddressSelect = (place) => {
     const address = place.formatted_address;
     const components = place.address_components;
-    const profileUpdate = { address };
+    const clinicUpdate = { address };
 
     components.forEach(component => {
       const types = component.types;
       if (types.includes("subpremise")) {
-        profileUpdate.unitNo = component.long_name;
+        clinicUpdate.unitNo = component.long_name;
       } else if (types.includes("street_number")) {
-        profileUpdate.streetNo = component.long_name;
+        clinicUpdate.streetNo = component.long_name;
       } else if (types.includes("route")) {
-        profileUpdate.streetName = component.long_name;
+        clinicUpdate.streetName = component.long_name;
       } else if (types.includes("locality")) {
-        profileUpdate.suburb = component.long_name;
+        clinicUpdate.suburb = component.long_name;
       } else if (types.includes("administrative_area_level_1")) {
-        profileUpdate.state = component.short_name;
+        clinicUpdate.state = component.short_name;
       } else if (types.includes("postal_code")) {
-        profileUpdate.postcode = component.long_name;
+        clinicUpdate.postcode = component.long_name;
       }
     });
 
-    setProfile(prevState => ({ ...prevState, ...profileUpdate }));
-    onAddressChange(address);
+    setClinic(prevState => ({ ...prevState, ...clinicUpdate }));
+    onClinicChange(address);
   };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setProfile({ ...profile, [name]: value });
+    setClinic({ ...clinic, [name]: value });
 
     if (name === 'address') {
-      onAddressChange(value);
+      onClinicChange(value);
     }
   };
 
@@ -76,11 +77,12 @@ const AddressForm = ({ onAddressAdded, onAddressChange }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('/api/addresses', profile); 
-      onAddressAdded();
-      setProfile({
-        firstName: '',
-        lastName: '',
+      await axios.post('/api/clinics', clinic); // Backend API URL here
+      onClinicAdded();
+      setClinic({
+        clinicName: '',
+        clinicId: '',
+        email: '',
         phone: '',
         address: '',
         unitNo: '',
@@ -91,29 +93,33 @@ const AddressForm = ({ onAddressAdded, onAddressChange }) => {
         postcode: ''
       });
     } catch (error) {
-      console.error('Error saving profile:', error);
+      console.error('Error saving clinic:', error);
     }
   };
 
   return (
     <form onSubmit={handleSubmit}>
       <div className="form-group">
-        <label>First name *</label>
-        <input name="firstName" value={profile.firstName} onChange={handleInputChange} required />
+        <label>Clinic Name *</label>
+        <input name="clinicName" value={clinic.clinicName} onChange={handleInputChange} required />
       </div>
       <div className="form-group">
-        <label>Last name *</label>
-        <input name="lastName" value={profile.lastName} onChange={handleInputChange} required />
+        <label>Clinic ID *</label>
+        <input name="clinicId" value={clinic.clinicId} onChange={handleInputChange} required />
+      </div>
+      <div className="form-group">
+        <label>Email *</label>
+        <input name="email" type="email" value={clinic.email} onChange={handleInputChange} required />
       </div>
       <div className="form-group">
         <label>Phone *</label>
-        <input name="phone" value={profile.phone} onChange={handleInputChange} required />
+        <input name="phone" type="tel" value={clinic.phone} onChange={handleInputChange} required />
       </div>
       <div className="form-group">
         <label>Address *</label>
         <input
           name="address"
-          value={profile.address}
+          value={clinic.address}
           onChange={handleInputChange}
           ref={autocompleteRef}
           placeholder="Start typing your address"
@@ -128,34 +134,34 @@ const AddressForm = ({ onAddressAdded, onAddressChange }) => {
         <div>
           <div className="form-group">
             <label>Unit No</label>
-            <input name="unitNo" value={profile.unitNo} onChange={handleInputChange} />
+            <input name="unitNo" value={clinic.unitNo} onChange={handleInputChange} />
           </div>
           <div className="form-group">
             <label>Street No *</label>
-            <input name="streetNo" value={profile.streetNo} onChange={handleInputChange} required />
+            <input name="streetNo" value={clinic.streetNo} onChange={handleInputChange} required />
           </div>
           <div className="form-group">
             <label>Street Name *</label>
-            <input name="streetName" value={profile.streetName} onChange={handleInputChange} required />
+            <input name="streetName" value={clinic.streetName} onChange={handleInputChange} required />
           </div>
           <div className="form-group">
             <label>Suburb *</label>
-            <input name="suburb" value={profile.suburb} onChange={handleInputChange} required />
+            <input name="suburb" value={clinic.suburb} onChange={handleInputChange} required />
           </div>
           <div className="form-group">
             <label>State *</label>
-            <input name="state" value={profile.state} onChange={handleInputChange} required />
+            <input name="state" value={clinic.state} onChange={handleInputChange} required />
           </div>
           <div className="form-group">
             <label>Postcode *</label>
-            <input name="postcode" value={profile.postcode} onChange={handleInputChange} required />
+            <input name="postcode" value={clinic.postcode} onChange={handleInputChange} required />
           </div>
         </div>
       )}
 
-      <button type="submit" className="add-btn">Add New Address</button>
+      <button type="submit" className="add-btn">Add New Clinic</button>
     </form>
   );
 };
 
-export default AddressForm;
+export default ClinicForm;

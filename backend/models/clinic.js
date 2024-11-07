@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
 
-const ProfileSchema = new mongoose.Schema({
-  storeName: { type: String, required: true },
-  storeId: { type: String, required: true },
+const ClinicSchema = new mongoose.Schema({
+  clinicName: { type: String, required: true },
+  clinicId: { type: String, required: true },
   email: { type: String, required: true },
   phone: { type: String, required: true },
   address: { type: String },
@@ -11,7 +11,9 @@ const ProfileSchema = new mongoose.Schema({
   streetName: { type: String }, 
   suburb: { type: String },
   state: { type: String },
-  postcode: { type: String }
+  postcode: { type: String },
+  latitude: { type: Number }, 
+  longitude: { type: Number } 
 });
 
-module.exports = mongoose.model('Profile', ProfileSchema);
+module.exports = mongoose.model('Clinic', ClinicSchema);
